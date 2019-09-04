@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelManager
@@ -31,14 +32,16 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun login(username: String, password: String) {
+    progress_bar_login.visibility = ProgressBar.VISIBLE
     Fuel.post("/user/login?_format=json")
       .header(Headers.CONTENT_TYPE, "application/json")
       .body("{\"name\":\"${username}\", \"pass\":\"${password}\"}")
       .also { println(it) }
       .responseString() { request, response, result ->
+        progress_bar_login.visibility = ProgressBar.INVISIBLE
         when (result) {
           is Result.Failure -> {
-            Toast.makeText(this, "Incorrect Credentials!", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Incorrect Credentials!", Toast.LENGTH_SHORT).show()
           }
           is Result.Success -> {
             val data = result.get()
